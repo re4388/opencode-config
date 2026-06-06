@@ -24,7 +24,6 @@
       }
     }
   },
-  "mcp": {},
   "permission": "allow",
   "lsp": true,
   "plugin": [
@@ -36,6 +35,11 @@
     },
     "general": {
       "disable": true
+    },
+    "explorer": {
+      "description": "Fast explorer subagent for codebase exploration",
+      "mode": "subagent",
+      "model": "9router/test0"
     }
   }
 }
