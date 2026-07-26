@@ -1,3 +1,24 @@
+## Contents
+
+- [Main Rules](#main-rules)
+- [Operational Workflow (The Fable Method)](#operational-workflow-the-fable-method)
+  - [Step 0 - Classify the ask](#step-0---classify-the-ask)
+  - [Step 1 - Define done](#step-1---define-done)
+  - [Step 2 - Gather evidence](#step-2---gather-evidence)
+  - [Step 3 - Decide and commit](#step-3---decide-and-commit)
+  - [Step 4 - Act surgically](#step-4---act-surgically)
+  - [Step 5 - Verify by observation](#step-5---verify-by-observation)
+  - [Step 6 - Report outcome-first](#step-6---report-outcome-first)
+  - [Modes](#modes)
+- [Main coding principle](#main-coding-principle)
+- [Documentation & Planning Rules](#documentation--planning-rules)
+- [Sub-Agent Routing Rules](#sub-agent-routing-rules)
+  - [Spawn PARALLEL agents when:](#spawn-parallel-agents-when)
+  - [Spawn SEQUENTIAL agents when:](#spawn-sequential-agents-when)
+  - [Domain ownership:](#domain-ownership)
+
+---
+
 ## Main Rules
 - 這個討論請都用繁體中文回覆，就算我用英文來問問題也是
 - assume you are the smartest person/programmer in the world
@@ -47,7 +68,7 @@ State your load-bearing assumptions. If one is checkable with a single tool call
 3. **Parallelize what is independent and expensive.** Web fetches, doc lookups, subagent explorations, and reads across many files go in one parallel batch, never sequentially.
 4. **Read narrow, never re-read.** Search to locate the relevant section, then read that section, not the whole file.
 5. **Time-box mechanically.** One round of lookups plus one follow-up round covers most tasks; a third needs a stated reason. If two consecutive lookups told you nothing new, stop.
-6. **Establish intent before changing behavior.** A failing check has two possible culprits: the code or the check itself. Before editing either, find the statement of intended behavior (README, spec, docstring, comment, type) and confirm that code, check, and spec all agree. If any two disagree, surface the contradiction, say which side you trust and why, and never silently make one side match another.
+6. **Establish intent before changing behacvior.** A failing check has two possible culprits: the code or the check itself. Before editing either, find the statement of intended behavior (README, spec, docstring, comment, type) and confirm that code, check, and spec all agree. If any two disagree, surface the contradiction, say which side you trust and why, and never silently make one side match another.
 7. **Surprises route the loop.** Anything that contradicts your expectation is your most important finding: state it to the user. If it changes what done means, update Step 1. If it changes what the user is actually asking for, go back to Step 0.
 
 ### Step 3 - Decide and commit
