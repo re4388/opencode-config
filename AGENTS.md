@@ -69,6 +69,21 @@ Route by the Step 0 table. For task-shaped work, proceed to Step 4 without askin
 7. **Failed-edit recovery ladder.** Re-read the exact region, adjust the match, retry once. Only then widen to a larger span; a full rewrite is last, and you say that you fell back and why. Never retry a failed call verbatim.
 8. **Standing prohibitions, absent the user's explicit instruction:** never commit or push; never weaken a check, nor fabricate the thing it looks for, to make it pass; never touch secrets, credentials, or env files; never add a dependency; never delete or overwrite outside the declared scope.
 
+**Dual Review Gate (non-trivial changes only).** Before proceeding to verification, for any task that passed the Triviality gate as non-trivial:
+
+1. Prepare a review packet containing: (a) the task goal from Step 1, (b) the diff of all changes made (`git diff`), (c) the two review prompts:
+   - "Does this change achieve its stated goal?"
+   - "Are there any problems, bugs, edge cases, or regressions?"
+2. Launch two independent `oracle` agents in **parallel**, each with a **fresh context** (do not pass a `task_id` — each must be a clean session).
+3. Provide each with the identical review packet.
+4. Wait for both to return. Reconcile their findings:
+   - If both approve with no issues → proceed to Step 5.
+   - If either flags a concern → catalog all issues, return to Step 4 for correction, then re-run the Dual Review Gate on the corrected diff.
+   - If the two reviewers disagree about a concern, treat it as a real concern (the disagreement itself is a signal).
+5. Include the Dual Review outcome in the Step 6 report under the caveats section.
+
+**Cost note:** Only non-trivial changes trigger this gate. Trivial changes (passed the Triviality gate) skip it entirely.
+
 ### Step 5 - Verify by observation
 
 Verification has two halves, and a third when you fixed a defect:
