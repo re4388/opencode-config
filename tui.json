@@ -165,5 +165,8 @@
     "which_key_page_down": "ctrl+alt+pagedown",
     "which_key_home": "ctrl+alt+home",
     "which_key_end": "ctrl+alt+end"
-  }
+  },
+  "plugin": [
+    "@tarquinen/opencode-dcp@latest"
+  ]
 }

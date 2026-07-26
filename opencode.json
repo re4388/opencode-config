@@ -16,29 +16,19 @@
             "output": 65536
           },
           "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
+            "input": ["text", "image"],
+            "output": ["text"]
           }
         },
         "paid": {
-          "name": "paid",
+          "name": "dsv4",
           "limit": {
             "context": 1048576,
             "output": 65536
           },
           "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
+            "input": ["text", "image"],
+            "output": ["text"]
           }
         }
       }
@@ -46,9 +36,7 @@
   },
   "permission": "allow",
   "lsp": true,
-  "plugin": [
-    "./plugins/agentmemory-capture.ts"
-  ],
+  "plugin": ["@tarquinen/opencode-dcp@latest", "opencode-mem"],
   "agent": {
     "explore": {
       "disable": true
