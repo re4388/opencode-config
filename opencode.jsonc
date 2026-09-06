@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.local.md"],
   "model": "9router/test0",
   "provider": {
     "9router": {
@@ -34,9 +35,24 @@
       }
     }
   },
+  "mcp": {
+    // "line-desktop": {
+    //   "type": "local",
+    //   "command": ["npx", "line-desktop-mcp@latest"],
+    //   "enabled": true
+    // }
+  },
   "permission": "allow",
+  // "experimental": {
+  //   "disable_paste_summary": true
+  // },
   "lsp": true,
-  "plugin": ["@tarquinen/opencode-dcp@latest", "opencode-mem"],
+  "plugin": [
+    "opencode-mem", 
+    "opencode-sessions",
+    // "file:///Users/re4388/.config/opencode/opencode_session.js",
+    "./ponytail/.opencode/plugins/ponytail.mjs"
+  ],
   "agent": {
     "explore": {
       "disable": true

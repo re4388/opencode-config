@@ -1,0 +1,30 @@
+{
+  "changelists": [
+    {
+      "name": "Default",
+      "files": [
+        "AGENTS.md",
+        "opencode.json",
+        "tui.json",
+        "\"AGENTS copy.md\"",
+        "opencode.jsonc",
+        "plugins/lesson1-log.ts",
+        "plugins/lesson2-env-guard.ts",
+        "plugins/lesson3-secret-guard.ts",
+        "plugins/lesson4-wordcount.ts",
+        "plugins/lesson5-notifier.ts",
+        "ponytail/",
+        "skills/teach/GLOSSARY-FORMAT.md",
+        "skills/teach/LEARNING-RECORD-FORMAT.md",
+        "skills/teach/MISSION-FORMAT.md",
+        "skills/teach/RESOURCES-FORMAT.md",
+        "skills/teach/SKILL.md",
+        ".vscode/changelists.json",
+        "\"tui copy.json\"",
+        "opencode_session.js",
+        "package-lock.json"
+      ]
+    }
+  ],
+  "active": "Default"
+}
