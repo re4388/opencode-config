@@ -1,1 +1,67 @@
-/Users/re4388/.agents/AGENTS.md
+# 給 Agent 的規則
+
+## 回覆語言
+- 一律用繁體中文回覆。英文提問也一樣。
+  - 繁體中文用白話說明。寫中文時載入 `plain-chinese` skill。
+  - 規則本體只有一份：`skills/plain-chinese/SKILL.md`。本檔不重複。
+
+
+
+## 表格使用
+只在內容短時用 Markdown 表格：欄位 ≤4、每格 ≤10 字、純對照。
+其他情況改用清單，或 `###` 小標題加段落。
+不確定時用清單。預設「純文字編輯器也讀得順」。
+
+## 設定檔路徑
+根目錄：`/Users/re4388/project/personal/git-clone-pjt/llm_skill_0/`
+- skill 安裝 → `skills/`
+- 本規則檔 → `AGENTS.md`
+
+這個資料夾用 git 管理。
+opencode 設定放在 `dotfiles/llm_related/opencode.jsonc`。
+
+## 寫程式原則
+先想再寫。有疑問就問，不要亂猜。假設要講明。有更簡單的做法就說。
+
+- 最小實作。不加沒要求的彈性、抽象、config。
+- 200 行能寫成 50 行就重寫。
+- 只改必須改的地方。不動無關的程式、註解、格式。沿用現有風格。
+- 清掉你的改動造成的孤兒（import、變數、函式）。既有的死碼只提不動。
+- 每一行改動都要對得上使用者的需求。
+- 把任務變成可驗證的目標：
+  - 「加驗證」→ 先寫非法輸入的測試，再讓它通過。
+  - 「修 bug」→ 先寫重現 bug 的測試，再修。
+  - 「重構 X」→ 改前改後測試都要過。
+- Prove it works（證明它真的能動）：說「完成」之前，先執行真實的東西。
+  呼叫 endpoint、讀資料庫的資料列，或執行 CLI。
+  「編譯通過」和「單元測試通過」都不算證明。
+- Fix root causes（修根本原因）：先重現 bug，再找出成因機制。
+  然後才修。修完後，重跑原本的重現步驟。
+- Boundary discipline（邊界紀律）：在邊緣驗證外部輸入
+  （controller、adapter、消費者）。領域層內部信任型別。
+  業務邏輯不放框架程式碼。
+- Type system discipline（型別系統紀律）：讓非法狀態難以表示。
+  TS：discriminated union、branded type。
+  Java：record、sealed interface、值物件。
+- Idempotent operations（冪等操作）：重試或重複訊息必須得到相同結果。
+  檢查每個 handler、消費者和有鎖保護的步驟。
+- Model the domain（建模領域）：用一個明確的領域結構，
+  取代散落各處的條件判斷。
+- Laziness（偷懶原則）：優先刪除，並選擇最小但完整的改動。
+  只在真實邊界新增層或抽象。
+
+
+
+## 文件與測試
+1. 使用者確認新的實作計畫後，記到 `docs/` 的設計文件。
+2. 實作有調整或優化時，同步更新對應文件。
+3. 新增程式碼就一定要有對應的單元測試。
+
+## Sub-agent 分工
+平行：領域獨立（前端／後端／DB）、多檔分析、不寫檔的研究。
+循序：第 N 步的輸出是第 N+1 步的輸入（例如 DB migration 要先做完）。
+
+各領域負責：
+- 前端：React 元件、UI 狀態
+- 後端：API route、商業邏輯
+- 資料庫：schema、migration、query

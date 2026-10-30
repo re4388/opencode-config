@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "commit_and_push",
+      "type": "shell",
+      "command": "stamp=$(python3 -c \"import datetime;d=datetime.datetime.now();print(d.strftime('%Y_%m%d_%H%M')+'_%03d'%(d.microsecond//1000))\") && git add -A && if git diff --cached --quiet; then echo \"nothing to commit\"; else git commit -m \"$stamp\" && git push origin HEAD; fi",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    }
+  ]
+}
