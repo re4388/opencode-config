@@ -62,7 +62,7 @@ printenv API_KEY_9ROUTER
 正式設定檔在：
 
 ```
-/Users/re4388/project/personal/my-github-pjt/dotfiles/llm_related/opencode.jsonc
+/Users/re4388/.config/opencode/opencode.jsonc
 ```
 
 ## bk/ 備份檔

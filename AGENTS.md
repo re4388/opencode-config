@@ -18,7 +18,7 @@
 - 本規則檔 → `AGENTS.md`
 
 這個資料夾用 git 管理。
-opencode 設定放在 `dotfiles/llm_related/opencode.jsonc`。
+opencode 設定放在 `~/.config/opencode/opencode.jsonc`。
 
 ## 寫程式原則
 先想再寫。有疑問就問，不要亂猜。假設要講明。有更簡單的做法就說。
