@@ -6,7 +6,7 @@
       "npm": "@ai-sdk/openai-compatible",
       "options": {
         "baseURL": "http://127.0.0.1:20128/v1",
-        "apiKey": "***REMOVED***"
+        "apiKey": "{env:API_KEY_9ROUTER}"
       },
       "models": {
         "test0": {

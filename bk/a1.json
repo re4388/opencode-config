@@ -145,7 +145,7 @@
       "npm": "@ai-sdk/openai-compatible",
       "options": {
         "baseURL": "http://127.0.0.1:20128/v1",
-        "apiKey": "***REMOVED***"
+        "apiKey": "{env:API_KEY_9ROUTER}"
       },
       "models": {
         "test0": {
@@ -194,7 +194,7 @@
         "firecrawl-mcp"
       ],
       "environment": {
-        "FIRECRAWL_API_KEY": "***REMOVED***"
+        "FIRECRAWL_API_KEY": "{env:FIRECRAWL_API_KEY}"
       }
     },
     "notion": {
@@ -206,7 +206,7 @@
         "@notionhq/notion-mcp-server"
       ],
       "env": {
-        "NOTION_TOKEN": "***REMOVED***"
+        "NOTION_TOKEN": "{env:NOTION_TOKEN}"
       }
     }
   },
