@@ -3,7 +3,7 @@
   "leader_timeout": 2000,
   "keybinds": {
     "leader": "ctrl+x",
-    "app_exit": "ctrl+c,ctrl+d,<leader>q",
+    "app_exit": "none",
     "app_debug": "none",
     "app_console": "none",
     "app_heap_snapshot": "none",
