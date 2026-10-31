@@ -56,7 +56,7 @@ Backlog 只寫進回覆，不建單、不寫檔、不自己找地方記。
 - `tune description: <skill path>`（skill 在，但該觸發時沒觸發）：交給 `skill-creator`，走它的 description 最佳化迴圈。
 - `new skill via skill-creator: <kebab-name>`：建立交給 `skill-creator`。不要現編 skill 的結構。
 
-skill 改在安裝位置：`~/.agents/skills/<name>/`（連到 `llm_skill_0/skills/`）；專案自己的在 `.opencode/skills/`。
+skill 改在安裝位置：`~/.agents/skills/<name>/`（連到 `~/.config/opencode/skills/`）；專案自己的在 `.opencode/skills/`。
 
 環境裡如果自帶 SKILL.md validator，每個改過的 skill 在宣佈完成之前都跑一遍。
 

@@ -29,41 +29,19 @@ version: 1.0.0
 - 指定正確語言大幅提升準確率；不確定用 auto。
 - 轉完若整篇錯字或錯語言 → 立即換正確語言重跑，不等使用者糾正。
 
-### 3. 轉錄(mlx-whisper / Metal)
-- 環境：`~/.venvs/whisper-bench/bin/python`(內含 mlx-whisper；faster-whisper 1.2.1 作備援)。
-- **模型預設 small**(中文錯字最少)，求快可降 base。
-- 實測(M2 Air)：mlx small ~8.7x real-time；`medium`/`large-v3` 在此硬體慢於 real-time，**勿用**。
+### 3. 轉錄
 
-```python
-# transcribe.py
-import mlx_whisper
-text = mlx_whisper.transcribe(
-    "/path/to/audio.m4a",
-    path_or_hf_repo="mlx-community/whisper-small-mlx",
-    language="zh",  # 依步驟 2
-)["text"]
-with open("/path/to/output.txt", "w") as f:
-    f.write(text)
-```
+轉錄實作只有一份，在 `yt-no-subtitle/scripts/whisper_local.py`。**不要自己寫 transcribe.py。**
 
-執行：
 ```bash
-~/.venvs/whisper-bench/bin/python transcribe.py
+~/.venvs/whisper-bench/bin/python ~/.config/opencode/skills/yt-no-subtitle/scripts/whisper_local.py \
+  "/path/to/foo.m4a" --lang zh --out "/path/to/foo.txt"
 ```
-- 模型已快取於 `~/.cache/huggingface`，勿重複下載。
-- **>30 分鐘長檔**：foreground timeout 上限 600s，超過須背景執行
-  `terminal("...python script.py", background=True, notify_on_complete=True)`，
-  完成後 read_file 看結果。mlx 是整檔一次跑完，無 per-segment 進度；跑在 GPU 上時 %cpu 低是正常的。
-- 無須 ffmpeg 切片，單檔直接餵即可。
 
-**faster-whisper 備援(僅 mlx 不可用時)：**
-```python
-from faster_whisper import WhisperModel
-model = WhisperModel("base", device="cpu", compute_type="int8")
-segs, _ = model.transcribe("audio.m4a", beam_size=5, language="zh")
-text = " ".join(s.text for s in segs)
-```
-注意：CPU int8 慢很多(~3.2x real-time)，且 VAD filter 某些 segment 可異常慢 10x，勿開。
+- 預設引擎 qwen3（中文最佳）；要回 whisper 用 `--engine whisper --model small`
+- 中文輸出預設繁體（OpenCC 轉換;兩個引擎原生都吐簡體）,要簡體加 `--simplified`
+- >30 分鐘的檔要背景執行；完成通知不帶 stdout,靠 read_file 看輸出檔
+- 模型選擇、速度實測、faster-whisper 備援、無 diarization 等知識全屬 `yt-no-subtitle`,本 skill 不重複
 
 ### 4. 產出檔案(同目錄、同 basename)
 原檔位於 `~/Downloads/foo.m4a` → 輸出 `~/Downloads/foo.txt`、`~/Downloads/foo.md`、`~/Downloads/foo_摘要.md`。
@@ -146,8 +124,8 @@ text = " ".join(s.text for s in segs)
 - 本流程**無 speaker diarization**。多人同時講話、遠場會議錄音品質會明顯變差。轉錄前提示使用者，讓其降低期待；若使用者明確要求分 speaker，告知此 skill 不支援。
 
 ### 本機轉錄限制
-- mlx 甜蜜點 = base/small。medium/large-v3 在此硬體 memory-bandwidth bound，慢於 real-time，勿用。
-- 長檔(>30 min)務必背景執行；不要同時開多個 mlx 進程(搶 GPU memory 更慢)，循序跑。
+- 模型與速度取捨屬 `yt-no-subtitle`,唯一寫在 `yt-no-subtitle/scripts/whisper_local.py` 的 docstring。
+- 這裡只記一条：長檔(>30 min)背景執行,不要並行開多個轉錄。
 
 ### 暫存清理
 - `.py` 腳本、ffmpeg 抽出的 `_extract.m4a` 等暫存檔：**先取得使用者確認再刪**，`rm` 常被系統擋，清理失敗就告知使用者並保持原樣。

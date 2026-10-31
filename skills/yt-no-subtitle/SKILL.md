@@ -84,26 +84,34 @@ def clean_vtt(path):
 
 ### 1. 判斷轉錄方式
 - **9Router API**：截至 2026-06，quota 常態性耗盡，除非特別要求，否則優先使用本地轉錄。
-- **本地 mlx-whisper（預設）**：Apple Silicon Metal GPU 加速。venv：`~/.venvs/whisper-bench`（已含 mlx-whisper + faster-whisper 1.2.1 作備援）。
-  - **模型選擇（M2 Air 實測 748s 中文音檔）**：`base` 39s（19x real-time）；`small` ~86s（8.7x）且中文準確率明顯優於 base；faster-whisper CPU int8 base 236s（3.2x）。
-  - **`medium`/`large-v3` 在此硬體慢於 real-time，不可用**（memory bandwidth bound）。
-  - 預設用 **small**（中文錯字最少）；求快可降 `base`。2h 影片外推：CPU base ~38min、mlx base ~6min、mlx small ~14min。
+- **本地（預設）**：venv `~/.venvs/whisper-bench`，兩個引擎，都在 Apple GPU 上跑。
+  - **qwen3（預設）**：Qwen3-ASR 0.6B。740s 台灣中文對話實測 **132s（5.6x）、4001 字、無重複迴圈**，是目前中文最好的一組。
+  - **whisper**：mlx-whisper，`--model` 選大小。同一支 740s 檔：
+
+    | 模型 | 耗時 | 字數 | 問題 |
+    |---|---|---|---|
+    | small | 98s（7.6x） | 3475 | 無 |
+    | large-v3-turbo | 187s（4.0x） | 3429 | 會迴圈 |
+    | base | ~35s | — | 整句錯 |
+
+    `large-v3-turbo` 在真實對話上會卡進「你先來你先來…」這種重複迴圈，並漏掉整段內容；`medium`/`large-v3` 慢於即時。所以 whisper 引擎預設 `small`，turbo 只在 qwen3 不可用時當備援。
+
+    **決策紀錄（2026-10-31）**：試過把 turbo 設為預設，740s 真實音檔實測後撤回——比 qwen3 慢、字數更少、還會迴圈。不要再用「turbo 比較大所以比較準」推回去；那個結論只在 TTS 音檔上成立。
+  - **中文輸出預設繁體**：兩個引擎原生都吐簡體，腳本用 OpenCC 轉（不是 initial_prompt——small 模型會把 prompt 原樣吐回來）。要簡體加 `--simplified`。
 - **路徑偏好**：若輸入檔案位於 workspace 外部（如 `~/Downloads/`），**輸出的 .txt 與 .md 應與原檔放置於同一目錄**，腳本則保留在 workspace 方便執行。
 
 ### 2. 執行指令
-`execute_code` sandbox 無 mlx-whisper，須將腳本寫入檔案後透過 `terminal` 執行。
 
-```python
-# templates/transcribe_template.py
-import mlx_whisper
-text = mlx_whisper.transcribe("audio.m4a", path_or_hf_repo="mlx-community/whisper-small-mlx", language="zh")["text"]
-with open("output.txt", "w") as f:
-    f.write(text)
+轉錄只有一份實作：`scripts/whisper_local.py`。**不要自己寫 transcribe 腳本**——引擎/模型選擇、速度實測、長檔背景執行、失敗備援全寫在那支的 docstring 裡，`--help` 就是真相。
+
+```bash
+~/.venvs/whisper-bench/bin/python <skill>/scripts/whisper_local.py audio.m4a --lang zh --out out.txt
 ```
 
-- venv 執行：`~/.venvs/whisper-bench/bin/python script.py`
-- **背景執行**：`terminal("...script.py", background=True, notify_on_complete=True)`（長影片 >30 min 必用）
-- 模型首次下載至 `~/.cache/huggingface`（HF 下載偏慢，已快取後勿重複下載）
+- 預設引擎 qwen3；要回 whisper 加 `--engine whisper --model small`
+- `execute_code` sandbox 沒有這些模型，一律用 `terminal()` 呼叫上面這行
+- >30 min 的檔用 `background=True, notify_on_complete=True`；它只通知完成不 capture stdout，所以結果一定寫檔再 read_file
+- 多檔循序跑，不要並行（搶 GPU memory 反而更慢）
 
 ## GitHub 自動化推送
 所有轉錄完成後，應推送至 `re4388/audio_transcript_0`。
@@ -113,58 +121,6 @@ with open("output.txt", "w") as f:
 3. `cp -- <id>.txt <id>.md <YYYYMMDD_N>/`
 4. `git add . && git commit -m "..." && git push`
 
-
-- **無須 ffmpeg 切片** — 單檔 <~100MB 直接餵給 mlx-whisper 即可
-- **background 模式**：若音訊 >30 分鐘（foreground timeout 600s 不足），用 `notify_on_complete=true`：
-
-```bash
-# 寫入腳本後執行
-terminal("~/.venvs/whisper-bench/bin/python /path/to/script.py", background=True, notify_on_complete=true)
-# 完成後自動通知，直接 read_file 看結果
-```
-
-- 注意：`notify_on_complete` 只通知完成，**不 capture stdout**。把結果寫到檔案後 read_file
-
-**重要限制：`execute_code` sandbox 無 mlx-whisper。須寫 .py 到磁碟，用 `terminal()` 執行：**
-
-```bash
-# 1. write_file 寫入腳本
-# 2. terminal("~/.venvs/whisper-bench/bin/python -u /path/to/script.py")
-```
-
-**批次處理（多影片）：**
-mlx-whisper 走 Metal GPU，但仍循序執行即可（一支跑完再跑下一支）：
-- 不要啟動多個 Python 進程同時跑 mlx-whisper（會搶 GPU memory 反而更慢）
-- 每支 <30 min 可放心前景跑；mlx small 約 8.7x real-time，一支 2h 影片 ~14min
-
-**Python API（建議）：**
-```python
-import mlx_whisper
-text = mlx_whisper.transcribe("/path/to/audio.m4a", path_or_hf_repo="mlx-community/whisper-small-mlx", language="zh")["text"]
-# omit language → auto-detect；指定 "zh"/"en" 提升準確率
-with open("/path/to/yt_transcript_XXX.txt", "w") as f:
-    f.write(text)
-```
-
-**faster-whisper 備援（僅在 mlx 不可用時）：**
-```python
-from faster_whisper import WhisperModel
-model = WhisperModel("base", device="cpu", compute_type="int8")
-segs, _ = model.transcribe("/path/to/audio.m4a", beam_size=5, language="zh")
-text = " ".join(s.text for s in segs)
-with open("/path/to/yt_transcript_XXX.txt", "w") as f:
-    f.write(text)
-```
-
-**長影片（>30 min）背景轉錄模式：**
-mlx `transcribe()` 是整檔一次跑完，無 per-segment 進度回呼。Foreground timeout 上限 600s，超過須用背景模式（mlx small 對 2h 影片約 14min，需背景）：
-```python
-# 背景執行，完成後自動通知；結果寫入檔案後 read_file 看結果
-# terminal("~/.venvs/whisper-bench/bin/python script.py", background=True, notify_on_complete=True)
-# 中途想看進度：process(action='poll') 看 %cpu；mlx 在 GPU 上跑時 %cpu 低是正常的
-```
-
-完整參考：`references/background-transcription.md`
 
 **原版 Whisper CLI（最後手段，慢）：**
 ```bash

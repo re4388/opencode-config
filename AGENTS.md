@@ -12,14 +12,6 @@
 其他情況改用清單，或 `###` 小標題加段落。
 不確定時用清單。預設「純文字編輯器也讀得順」。
 
-## 設定檔路徑
-根目錄：`/Users/re4388/project/personal/git-clone-pjt/llm_skill_0/`
-- skill 安裝 → `skills/`
-- 本規則檔 → `AGENTS.md`
-
-這個資料夾用 git 管理。
-opencode 設定放在 `~/.config/opencode/opencode.jsonc`。
-
 ## 寫程式原則
 先想再寫。有疑問就問，不要亂猜。假設要講明。有更簡單的做法就說。
 

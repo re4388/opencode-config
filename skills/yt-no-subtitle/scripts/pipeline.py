@@ -101,7 +101,7 @@ def download_audio(urls_file, audio_dir):
 
 
 def transcribe_missing(ids, audio_dir, txt_dir, lang):
-    import mlx_whisper  # 需在 venv 執行：~/.venvs/whisper-bench/bin/python
+    from whisper_local import transcribe  # 需在 venv 執行：~/.venvs/whisper-bench/bin/python
     for vid in ids:
         dst = os.path.join(txt_dir, vid + ".txt")
         if os.path.exists(dst) and os.path.getsize(dst) > 0:
@@ -110,10 +110,7 @@ def transcribe_missing(ids, audio_dir, txt_dir, lang):
         if not os.path.exists(src):
             print(f"MISSING AUDIO {vid}")
             continue
-        text = mlx_whisper.transcribe(
-            src, path_or_hf_repo="mlx-community/whisper-small-mlx", language=lang
-        )["text"]
-        open(dst, "w", encoding="utf-8").write(text)
+        text = transcribe(src, lang, out=dst)
         print(f"{vid} <- whisper/{lang} ({len(text)} chars)")
 
 

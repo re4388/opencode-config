@@ -1,0 +1,29 @@
+import { Plugin } from "@opencode/plugin"
+import { execFileSync } from "node:child_process"
+
+// The shared server has no HERDR_* env; herdr resolves its own default socket.
+const json = (file: string, args: string[]) => JSON.parse(execFileSync(file, args, { encoding: "utf8" }))
+
+export default Plugin.define({
+  id: "fork-to-tab",
+  async setup(ctx) {
+    await ctx.command.transform((editor) => {
+      editor.add({
+        name: "fork-to-tab",
+        description: "Fork this session into a new herdr tab",
+        execute: async ({ sessionID }) => {
+          // ctx.session has no fork method; the HTTP API is the only path.
+          const { data: forked } = json("opencode", ["api", "post", `/api/session/${sessionID}/fork`, "--data", "{}"])
+
+          const tab = json("herdr", [
+            "tab", "create",
+            "--cwd", forked.location?.directory ?? ctx.location.directory,
+            "--label", forked.title,
+            "--focus",
+          ])
+          json("herdr", ["pane", "run", tab.result.root_pane.pane_id, `opencode --session ${forked.id}`])
+        },
+      })
+    })
+  },
+})

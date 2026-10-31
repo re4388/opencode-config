@@ -160,5 +160,6 @@
   "animations": true,
   "terminal": {
     "copy": "select"
-  }
+  },
+  "plugins": ["./herdr-opencode"]
 }
