@@ -5,8 +5,6 @@
   - 繁體中文用白話說明。寫中文時載入 `plain-chinese` skill。
   - 規則本體只有一份：`skills/plain-chinese/SKILL.md`。本檔不重複。
 
-
-
 ## 表格使用
 只在內容短時用 Markdown 表格：欄位 ≤4、每格 ≤10 字、純對照。
 其他情況改用清單，或 `###` 小標題加段落。
