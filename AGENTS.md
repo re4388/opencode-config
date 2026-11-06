@@ -29,6 +29,13 @@
 - 新增行為要有測試。測試要驗使用者能觀察到的行為；難測時改用可執行的驗證，並說明原因。
 - 實作調整時同步更新對應文件。
 
+## 瀏覽器檢查（playwright-cli）
+- 要開瀏覽器時，先假設 `PLAYWRIGHT_MCP_EXTENSION_TOKEN` 已在環境變數裡（來源：`~/.config/secrets/playwright.env`，由 `~/.zshenv` 帶入）。
+- 接使用者已登入的 Chrome：`playwright-cli attach --extension=chrome`，之後指令帶 `-s=chrome`。
+- 只有 attach 因 token 失敗時，才改用 `open` 開新瀏覽器。
+- token 過期／無效就**直接告訴使用者去更新 `~/.config/secrets/playwright.env`**，不要自己猜、不要改那支檔案。
+- token 值不寫進任何 repo、指令紀錄或文件。
+
 ## Sub-agent 分工
 - 平行：領域獨立、多檔分析、不寫檔的研究。
 - 循序：前一步的輸出是後一步的輸入時，等它做完再開始。

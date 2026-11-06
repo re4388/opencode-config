@@ -73,6 +73,12 @@ You win twice: fewer tokens, and a sharper hook for the agent to hang its thinki
 
 **Negation** is the failure mode beside this lever: steering by prohibition drags the forbidden behaviour into context and makes it _more_ available, not less. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. Prompt the **positive**: state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively; even then, pair it with the positive target so attention lands on what to do.
 
+## Editing an existing document
+
+Anchor an edit on whole sentences or paragraphs, never mid-sentence: an inserted block swallows the tail of the sentence it lands in, and that leftover reads like new material. Re-read the edited section before moving on.
+
+When a run contradicts a line in the document, fix that line in the same turn. Asking whether to fix a line you already know is wrong leaves the next agent reading the wrong thing.
+
 ## Pruning
 
 - Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit. **Duplication** (the same meaning in more than one place) costs maintenance and tokens, and inflates a meaning's prominence on the ladder past its real rank. (The accidental inverse of a leading word, which repeats a token on purpose, never the meaning.)
